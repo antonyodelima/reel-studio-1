@@ -7,6 +7,7 @@ import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { createMediaRecord, createProjectRecord, createRenderJob, createSceneRecords, getProjectById, getRenderJob, getScenes, listProjects, updateProjectRecord, updateRenderJob, updateSceneRecord } from "./db";
 import { renderProject } from "./render";
 import { storagePut } from "./storage";
+import { generateCartesiaWav, listCartesiaVoices } from "./tts";
 
 const sceneSchema = z.object({ label: z.string().min(1).max(80), title: z.string().min(1).max(400), caption: z.string().min(1).max(400), durationMs: z.number().int().min(1000).max(60000).optional() });
 const projectId = z.number().int().positive();
@@ -41,6 +42,24 @@ export const appRouter = router({
     importSource: protectedProcedure.input(z.object({ projectId: projectId, url: z.string().url().max(1000) })).mutation(async ({ ctx, input }) => { const project = await getProjectById(userId(ctx), input.projectId); if (!project) throw new Error("Projeto não encontrado"); const response = await fetch(input.url, { headers: { "User-Agent": "ReelStudio/1.0" }, signal: AbortSignal.timeout(12000) }); if (!response.ok) throw new Error(`Não foi possível importar esta página (${response.status})`); const text = extractText(await response.text()); if (text.length < 40) throw new Error("A página não trouxe texto suficiente"); const draft = await generateSceneDraft(text); const scenes = await createSceneRecords(project.id, draft.map((scene, index) => ({ ...scene, position: index }))); return { sourceText: text, scenes }; }),
     generateScenes: protectedProcedure.input(z.object({ projectId, brief: z.string().min(20).max(30000) })).mutation(async ({ ctx, input }) => { const project = await getProjectById(userId(ctx), input.projectId); if (!project) throw new Error("Projeto não encontrado"); const draft = await generateSceneDraft(input.brief); const scenes = await createSceneRecords(project.id, draft.map((scene, index) => ({ ...scene, position: index }))); return scenes; }),
     updateScene: protectedProcedure.input(z.object({ projectId, sceneId: z.number().int().positive(), title: z.string().min(1).max(400).optional(), caption: z.string().min(1).max(400).optional(), durationMs: z.number().int().min(1000).max(60000).optional(), locked: z.number().int().min(0).max(1).optional(), position: z.number().int().min(0).optional() })).mutation(async ({ ctx, input }) => { const project = await getProjectById(userId(ctx), input.projectId); if (!project) throw new Error("Projeto não encontrado"); const { projectId: _projectId, sceneId, ...patch } = input; return updateSceneRecord(project.id, sceneId, patch); }),
+    listVoices: protectedProcedure.input(z.object({ language: z.string().max(20).optional() }).optional()).query(({ input }) => listCartesiaVoices({ language: input?.language, limit: 100 })),
+    previewVoice: protectedProcedure.input(z.object({ voiceId: z.string().min(1).max(160), text: z.string().min(1).max(600), language: z.string().min(2).max(20).default("pt-BR") })).mutation(async ({ input }) => { const audio = await generateCartesiaWav({ transcript: input.text, voiceId: input.voiceId, language: input.language }); return { audioDataUrl: `data:audio/wav;base64,${audio.toString("base64")}` }; }),
+    generateVoice: protectedProcedure.input(z.object({ projectId, sceneId: z.number().int().positive(), voiceId: z.string().min(1).max(160), voiceName: z.string().min(1).max(160), language: z.string().min(2).max(20).default("pt-BR"), text: z.string().min(1).max(5000) })).mutation(async ({ ctx, input }) => {
+      const project = await getProjectById(userId(ctx), input.projectId);
+      if (!project) throw new Error("Projeto não encontrado");
+      const scenes = await getScenes(project.id);
+      const scene = scenes.find((item) => item.id === input.sceneId);
+      if (!scene) throw new Error("Cena não encontrada");
+      await updateSceneRecord(project.id, scene.id, { voiceProvider: "cartesia", voiceId: input.voiceId, voiceName: input.voiceName, voiceLanguage: input.language, voiceStatus: "generating", voiceError: null });
+      try {
+        const audio = await generateCartesiaWav({ transcript: input.text, voiceId: input.voiceId, language: input.language });
+        const uploaded = await storagePut(`users/${userId(ctx)}/projects/${project.id}/scenes/${scene.id}/voice.wav`, audio, "audio/wav");
+        return updateSceneRecord(project.id, scene.id, { voiceProvider: "cartesia", voiceId: input.voiceId, voiceName: input.voiceName, voiceLanguage: input.language, voiceAudioKey: uploaded.key, voiceAudioUrl: uploaded.url, voiceStatus: "ready", voiceError: null });
+      } catch (error) {
+        await updateSceneRecord(project.id, scene.id, { voiceStatus: "failed", voiceError: error instanceof Error ? error.message : "Falha ao gerar a narração" });
+        throw error;
+      }
+    }),
     uploadAsset: protectedProcedure.input(z.object({ projectId: projectId.optional(), fileName: z.string().min(1).max(255), mimeType: z.string().min(1).max(120), dataUrl: z.string().min(20).max(25_000_000) })).mutation(async ({ ctx, input }) => { const match = input.dataUrl.match(/^data:[^;]+;base64,(.+)$/); if (!match) throw new Error("Arquivo inválido"); const buffer = Buffer.from(match[1], "base64"); const uploaded = await storagePut(`users/${userId(ctx)}/uploads/${input.fileName}`, buffer, input.mimeType); return createMediaRecord({ userId: userId(ctx), projectId: input.projectId, fileName: input.fileName, mimeType: input.mimeType, storageKey: uploaded.key, storageUrl: uploaded.url }); }),
   }),
   renders: router({

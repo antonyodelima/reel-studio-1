@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildSrt, buildVtt } from "./render";
+import { buildSrt, buildVtt, narrationScenes } from "./render";
 
 describe("render subtitle exports", () => {
   const scenes = [
@@ -19,5 +19,14 @@ describe("render subtitle exports", () => {
     expect(vtt.startsWith("WEBVTT")).toBe(true);
     expect(vtt).toContain("00:00:00.000 --> 00:00:02.500");
     expect(vtt).toContain("Segunda cena");
+  });
+
+  it("selects only scenes with ready Cartesia narration", () => {
+    const voiced = narrationScenes([
+      { id: 1, voiceStatus: "ready", voiceAudioKey: "voice-1.wav" },
+      { id: 2, voiceStatus: "generating", voiceAudioKey: null },
+      { id: 3, voiceStatus: "ready", voiceAudioKey: null },
+    ] as any);
+    expect(voiced.map((scene) => scene.id)).toEqual([1]);
   });
 });

@@ -66,7 +66,7 @@ export async function createSceneRecords(projectId: number, records: Array<{ pos
   return getScenes(projectId);
 }
 
-export async function updateSceneRecord(projectId: number, sceneId: number, input: Partial<Pick<Scene, "title" | "caption" | "durationMs" | "locked" | "position" | "mediaUrl" | "mediaKey">>) {
+export async function updateSceneRecord(projectId: number, sceneId: number, input: Partial<Pick<Scene, "title" | "caption" | "durationMs" | "locked" | "position" | "mediaUrl" | "mediaKey" | "voiceProvider" | "voiceId" | "voiceName" | "voiceLanguage" | "voiceAudioUrl" | "voiceAudioKey" | "voiceStatus" | "voiceError">>) {
   const db = await getDb(); if (!db) throw new Error("Database is not configured");
   await db.update(scenes).set(input).where(and(eq(scenes.id, sceneId), eq(scenes.projectId, projectId)));
   const result = await db.select().from(scenes).where(and(eq(scenes.id, sceneId), eq(scenes.projectId, projectId))).limit(1);

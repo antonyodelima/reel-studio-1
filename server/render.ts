@@ -2,7 +2,7 @@ import { execFile } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { promisify } from "node:util";
-import { storagePut } from "./storage";
+import { storageGetSignedUrl, storagePut } from "./storage";
 import type { Project, Scene } from "../drizzle/schema";
 
 const execFileAsync = promisify(execFile);
@@ -19,6 +19,38 @@ export function buildSrt(scenes: Scene[]) { let cursor = 0; return scenes.map((s
 export function buildVtt(scenes: Scene[]) { let cursor = 0; return `WEBVTT\n\n${scenes.map((scene) => { const start = cursor; cursor += scene.durationMs; return `${timecode(start, ".")} --> ${timecode(cursor, ".")}\n${escapeSubtitle(scene.caption)}\n`; }).join("\n")}`; }
 function dimensions(format: string) { if (format === "16:9 Landscape") return { width: 1280, height: 720 }; if (format === "1:1 Square") return { width: 1080, height: 1080 }; return { width: 1080, height: 1920 }; }
 function colorFor(index: number) { return ["#ff7452", "#6c63ff", "#1fbf9f", "#57a9df", "#f5b83d"][index % 5]; }
+
+export function narrationScenes(scenes: Scene[]) { return scenes.filter((scene) => scene.voiceStatus === "ready" && Boolean(scene.voiceAudioKey)); }
+
+async function attachNarrationAudio(folder: string, videoPath: string, scenes: Scene[]) {
+  const voicedScenes = narrationScenes(scenes);
+  if (!voicedScenes.length) return videoPath;
+  const audioPaths: Array<{ path: string; offsetMs: number }> = [];
+  let cursor = 0;
+  try {
+    for (const scene of scenes) {
+      if (scene.voiceStatus === "ready" && scene.voiceAudioKey) {
+        const signedUrl = await storageGetSignedUrl(scene.voiceAudioKey);
+        const response = await fetch(signedUrl);
+        if (!response.ok) throw new Error(`Não foi possível baixar a narração da cena ${scene.position + 1}`);
+        const path = `${folder}/voice-${scene.id}.wav`;
+        await writeFile(path, Buffer.from(await response.arrayBuffer()));
+        audioPaths.push({ path, offsetMs: cursor });
+      }
+      cursor += scene.durationMs;
+    }
+    if (!audioPaths.length) return videoPath;
+    const output = `${folder}/reel-with-voice.mp4`;
+    const inputs = audioPaths.flatMap((audio) => ["-i", audio.path]);
+    const filters = audioPaths.map((audio, index) => `[${index + 1}:a]adelay=${audio.offsetMs}|${audio.offsetMs}[voice${index}]`);
+    filters.push(`${audioPaths.map((_, index) => `[voice${index}]`).join("")}amix=inputs=${audioPaths.length}:duration=longest:dropout_transition=0,aresample=async=1[aout]`);
+    await execFileAsync("ffmpeg", ["-y", "-i", videoPath, ...inputs, "-filter_complex", filters.join(";"), "-map", "0:v:0", "-map", "[aout]", "-c:v", "copy", "-c:a", "aac", "-t", String(cursor / 1000), output], { maxBuffer: 2_000_000, timeout: 180_000 });
+    return output;
+  } catch (error) {
+    console.warn("[Render] Narração não anexada; mantendo vídeo sem áudio:", error);
+    return videoPath;
+  }
+}
 
 export async function renderWithRemotion(folder: string, project: Project, scenes: Scene[]) {
   const entry = `${folder}/remotion-entry.tsx`; const output = `${folder}/reel-remotion.mp4`; await writeFile(entry, REMOTION_ENTRY, "utf8");
@@ -44,6 +76,7 @@ export async function renderProject(project: Project, scenes: Scene[], userId: n
   try {
     let output: string;
     if (engine === "remotion") { try { output = await renderWithRemotion(folder, project, scenes); } catch (error) { console.warn("[Render] Remotion falhou; usando fallback FFmpeg:", error); output = await renderWithFfmpeg(folder, project, scenes); } } else { output = await renderWithFfmpeg(folder, project, scenes); }
+    output = await attachNarrationAudio(folder, output, scenes);
     const [mp4, srt, vtt] = await Promise.all([readFile(output), Promise.resolve(Buffer.from(buildSrt(scenes), "utf8")), Promise.resolve(Buffer.from(buildVtt(scenes), "utf8"))]); const prefix = `users/${userId}/projects/${project.id}/renders/${Date.now()}`;
     const [videoFile, srtFile, vttFile] = await Promise.all([storagePut(`${prefix}/reel-${engine}.mp4`, mp4, "video/mp4"), storagePut(`${prefix}/captions.srt`, srt, "application/x-subrip"), storagePut(`${prefix}/captions.vtt`, vtt, "text/vtt")]); return { mp4Url: videoFile.url, srtUrl: srtFile.url, vttUrl: vttFile.url, engine };
   } finally { await rm(folder, { recursive: true, force: true }); }

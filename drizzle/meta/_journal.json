@@ -15,6 +15,13 @@
       "when": 1789998981446,
       "tag": "0001_dusty_amphibian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1790002658533,
+      "tag": "0002_next_menace",
+      "breakpoints": true
     }
   ]
 }

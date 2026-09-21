@@ -382,7 +382,7 @@ export const settingsSections = ["Geral", "Renderização", "Legendas", "Integra
 
 export const integrationItems = [
   { name: "Unsplash", status: "Connected", detail: "Stock images and videos" },
-  { name: "Kokoro", status: "Local", detail: "Browser voice generation" },
+  { name: "Cartesia Sonic", status: "Connected", detail: "Narração real em português e 40+ idiomas" },
   { name: "Ollama", status: "Optional", detail: "Local AI planning" },
 ];
 
@@ -1231,4 +1231,3 @@ export const allStatusHelpers = { statusLabel, statusTone, colorClasses, formatD
 export const all = { ...allMetadata, ...allWorkspace, ...allContent, ...allStatus, ...allEditorCopy, ...allSettingsCopy, ...allVoiceCopy, ...allCreateCopy, ...allExportCopy, ...allAudioCopy, ...allCaptionCopy, ...allNavigationCopy, ...allAccessibilityCopy, ...allProjectCopy, ...allStudioCopy, ...allActionsCopy, ...allMediaCopy, ...allEditorLabels, ...allAudioDefaults, ...allCaptionDefaults, ...allProjectDefaults, ...allRenderCopy, ...allPrivacyCopy, ...allPlatformCopy, ...allShortcuts, ...allFooterCopy, ...allAppConfig, ...allNumeric, ...allTokens, ...allEditorState, ...allCommands, ...allRoutesConfig, ...allWorkspaceConfig, ...allSupportConfig, ...allSampleContent, ...allVisualConfig, ...allNavConfig, ...allLabelsConfig, ...allMisc, ...allInitialData, ...allOptions, ...allTexts, ...allStatusHelpers };
 
 export default all;
-
