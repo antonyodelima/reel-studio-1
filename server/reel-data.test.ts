@@ -17,7 +17,7 @@ describe("reel data helpers", () => {
   });
 
   it("provides semantic labels and tones", () => {
-    expect(statusLabel("ready")).toBe("Ready");
+    expect(statusLabel("ready")).toBe("Pronto");
     expect(statusTone("rendering")).toContain("amber");
     expect(colorClasses("coral")).toContain("coral");
   });

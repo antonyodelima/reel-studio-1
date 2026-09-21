@@ -15,9 +15,9 @@ export type Project = {
 export const starterProjects: Project[] = [
   {
     id: "product-launch",
-    name: "Product launch / Aurora",
+    name: "Lançamento de produto / Aurora",
     type: "Reel",
-    preset: "Product Launch",
+    preset: "Lançamento de produto",
     status: "ready",
     scenes: 7,
     duration: "00:32",
@@ -26,9 +26,9 @@ export const starterProjects: Project[] = [
   },
   {
     id: "founder-story",
-    name: "Founder story — from zero",
+    name: "História da fundadora — do zero",
     type: "Short",
-    preset: "Creator Punch",
+    preset: "Impacto do criador",
     status: "draft",
     scenes: 5,
     duration: "00:24",
@@ -37,9 +37,9 @@ export const starterProjects: Project[] = [
   },
   {
     id: "data-story",
-    name: "Why teams ship faster",
+    name: "Por que equipes entregam mais rápido",
     type: "Explainer",
-    preset: "Data Story",
+    preset: "História com dados",
     status: "rendering",
     scenes: 9,
     duration: "00:48",
@@ -49,34 +49,34 @@ export const starterProjects: Project[] = [
 ];
 
 export const presets = [
-  { name: "Product Launch", meta: "Bold reveal · 9:16", color: "coral", icon: "✦" },
-  { name: "Creator Punch", meta: "Fast cuts · 9:16", color: "violet", icon: "✺" },
-  { name: "Editorial Explainer", meta: "Clean story · 16:9", color: "sky", icon: "▤" },
-  { name: "Data Story", meta: "Charts & numbers · 1:1", color: "mint", icon: "⌁" },
-  { name: "Developer Demo", meta: "Product walkthrough · 16:9", color: "amber", icon: "⌘" },
-  { name: "Cinematic Brand", meta: "Atmospheric · 9:16", color: "plum", icon: "◒" },
+  { name: "Lançamento de produto", meta: "Revelação marcante · 9:16", color: "coral", icon: "✦" },
+  { name: "Impacto do criador", meta: "Cortes rápidos · 9:16", color: "violet", icon: "✺" },
+  { name: "Explicador editorial", meta: "História limpa · 16:9", color: "sky", icon: "▤" },
+  { name: "História com dados", meta: "Gráficos e números · 1:1", color: "mint", icon: "⌁" },
+  { name: "Demo para desenvolvedores", meta: "Demonstração do produto · 16:9", color: "amber", icon: "⌘" },
+  { name: "Marca cinematográfica", meta: "Atmosférico · 9:16", color: "plum", icon: "◒" },
 ];
 
 export const voices = [
-  { name: "Maya", role: "Warm · confident", language: "English (US)", color: "coral", initials: "MA" },
-  { name: "Theo", role: "Clear · energetic", language: "English (UK)", color: "sky", initials: "TH" },
-  { name: "Sofia", role: "Natural · bright", language: "Português (BR)", color: "mint", initials: "SO" },
-  { name: "Nina", role: "Soft · cinematic", language: "Español (ES)", color: "violet", initials: "NI" },
+  { name: "Maya", role: "Acolhedora · confiante", language: "Inglês (EUA)", color: "coral", initials: "MA" },
+  { name: "Theo", role: "Clara · energética", language: "Inglês (Reino Unido)", color: "sky", initials: "TH" },
+  { name: "Sofia", role: "Natural · luminosa", language: "Português (BR)", color: "mint", initials: "SO" },
+  { name: "Nina", role: "Suave · cinematográfica", language: "Espanhol (Espanha)", color: "violet", initials: "NI" },
 ];
 
 export const sceneSamples = [
-  { id: 1, label: "Hook", title: "The old way is over.", caption: "The old way is over.", duration: "00:04", accent: "coral" },
-  { id: 2, label: "Context", title: "Ideas move at the speed of your workflow.", caption: "Ideas move at the speed of your workflow.", duration: "00:06", accent: "violet" },
-  { id: 3, label: "Proof", title: "One brief. Every format.", caption: "One brief. Every format.", duration: "00:05", accent: "mint" },
-  { id: 4, label: "Feature", title: "Create, refine, publish.", caption: "Create, refine, publish.", duration: "00:07", accent: "sky" },
-  { id: 5, label: "CTA", title: "Make your next reel feel inevitable.", caption: "Make your next reel feel inevitable.", duration: "00:06", accent: "amber" },
+  { id: 1, label: "Gancho", title: "O jeito antigo acabou.", caption: "O jeito antigo acabou.", duration: "00:04", accent: "coral" },
+  { id: 2, label: "Contexto", title: "Ideias avançam na velocidade do seu fluxo.", caption: "Ideias avançam na velocidade do seu fluxo.", duration: "00:06", accent: "violet" },
+  { id: 3, label: "Prova", title: "Um briefing. Todos os formatos.", caption: "Um briefing. Todos os formatos.", duration: "00:05", accent: "mint" },
+  { id: 4, label: "Recurso", title: "Crie, refine, publique.", caption: "Crie, refine, publique.", duration: "00:07", accent: "sky" },
+  { id: 5, label: "CTA", title: "Faça seu próximo reel parecer inevitável.", caption: "Faça seu próximo reel parecer inevitável.", duration: "00:06", accent: "amber" },
 ];
 
 export const navItems = [
-  { label: "Projects", href: "/", icon: "grid" },
+  { label: "Projetos", href: "/", icon: "grid" },
   { label: "Templates", href: "/templates", icon: "sparkles" },
-  { label: "Voices", href: "/voices", icon: "mic" },
-  { label: "Settings", href: "/settings", icon: "settings" },
+  { label: "Vozes", href: "/voices", icon: "mic" },
+  { label: "Configurações", href: "/settings", icon: "settings" },
 ];
 
 export function getProject(id?: string) {
@@ -95,7 +95,7 @@ export function colorClasses(color: string) {
 }
 
 export function statusLabel(status: ProjectStatus) {
-  return { draft: "Draft", rendering: "Rendering", ready: "Ready" }[status];
+  return { draft: "Rascunho", rendering: "Renderizando", ready: "Pronto" }[status];
 }
 
 export function statusTone(status: ProjectStatus) {
@@ -120,7 +120,7 @@ export function slugify(value: string) {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") || "untitled";
 }
 
-export function makeProject(name: string, preset = "Product Launch"): Project {
+export function makeProject(name: string, preset = "Lançamento de produto"): Project {
   return {
     id: `${slugify(name)}-${Date.now()}`,
     name,
@@ -138,25 +138,25 @@ export const initials = "AM";
 export const ownerName = "Alex Morgan";
 export const ownerEmail = "alex@northstar.studio";
 
-export const soundtracks = ["Ambient Glow", "Lo-fi Chill", "Upbeat Drive", "Cinematic Tension"];
+export const soundtracks = ["Brilho ambiente", "Lo-fi tranquilo", "Ritmo acelerado", "Tensão cinematográfica"];
 
 export const sampleStats = [
-  { label: "Projects this month", value: "18", delta: "+24%" },
-  { label: "Minutes rendered", value: "42.8", delta: "+12%" },
-  { label: "Avg. completion", value: "78%", delta: "+8%" },
+  { label: "Projetos este mês", value: "18", delta: "+24%" },
+  { label: "Minutos renderizados", value: "42.8", delta: "+12%" },
+  { label: "Conclusão média", value: "78%", delta: "+8%" },
 ];
 
 export const formatOptions = ["9:16 Portrait", "16:9 Landscape", "1:1 Square"];
 export const engineOptions = ["Remotion", "HyperFrames"];
-export const languageOptions = ["English (US)", "Português (BR)", "Español (ES)"];
+export const languageOptions = ["Português (BR)", "Inglês (EUA)", "Espanhol (Espanha)"];
 
 export type IconName = "grid" | "sparkles" | "mic" | "settings";
 
 export function timeGreeting() {
   const hour = new Date().getHours();
-  if (hour < 12) return "Good morning";
-  if (hour < 18) return "Good afternoon";
-  return "Good evening";
+  if (hour < 12) return "Bom dia";
+  if (hour < 18) return "Boa tarde";
+  return "Boa noite";
 }
 
 export function safeParse<T>(value: string | null, fallback: T): T {
@@ -193,9 +193,9 @@ export const quickTips = [
 ];
 
 export const recentActivity = [
-  { label: "Product launch / Aurora", action: "render completed", time: "2 min ago", color: "coral" },
-  { label: "Why teams ship faster", action: "render started", time: "Yesterday", color: "mint" },
-  { label: "Founder story — from zero", action: "scene 03 updated", time: "Yesterday", color: "violet" },
+  { label: "Lançamento de produto / Aurora", action: "render completed", time: "2 min ago", color: "coral" },
+  { label: "Por que equipes entregam mais rápido", action: "render started", time: "Yesterday", color: "mint" },
+  { label: "História da fundadora — do zero", action: "scene 03 updated", time: "Yesterday", color: "violet" },
 ];
 
 export const canvasDimensions = {
@@ -207,7 +207,7 @@ export const canvasDimensions = {
 export const chartValues = [38, 52, 47, 68, 63, 74, 69, 88, 78, 94, 84, 100];
 
 export const keyboardShortcuts = [
-  ["N", "New project"],
+  ["N", "Novo projeto"],
   ["⌘ K", "Command menu"],
   ["Space", "Play / pause"],
   ["⌘ S", "Save project"],
@@ -219,33 +219,33 @@ export const appVersion = "0.4.0";
 
 export const featureBullets = ["Local-first workflow", "Caption-ready exports", "Six production presets"];
 
-export const platformLabels = ["Instagram Reels", "YouTube Shorts", "TikTok", "LinkedIn"];
+export const platformLabels = ["Reels do Instagram", "Shorts do YouTube", "TikTok", "LinkedIn"];
 
 export const defaultProjectId = "product-launch";
 
-export const editorTabs = ["Scenes", "Captions", "Audio"];
+export const editorTabs = ["Cenas", "Legendas", "Áudio"];
 
-export const sceneKinds = ["Hook", "Context", "Proof", "Feature", "CTA"];
+export const sceneKinds = ["Gancho", "Contexto", "Prova", "Recurso", "CTA"];
 
-export const renderFormats = ["MP4 video", "SRT captions", "VTT captions", "WAV voiceover"];
+export const renderFormats = ["Vídeo MP4", "Legendas SRT", "Legendas VTT", "Narração WAV"];
 
-export const helpLinks = ["Creator guide", "Keyboard shortcuts", "Changelog"];
+export const helpLinks = ["Guia do criador", "Atalhos de teclado", "Changelog"];
 
-export const productionStages = ["Plan", "Write", "Design", "Produce"];
+export const productionStages = ["Planejar", "Escrever", "Projetar", "Produzir"];
 
 export const weekLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export const sidebarSections = [
-  { label: "Workspace", items: navItems },
-  { label: "Resources", items: [{ label: "Creator guide", href: "/templates", icon: "book" }] },
+  { label: "Espaço de trabalho", items: navItems },
+  { label: "Resources", items: [{ label: "Guia do criador", href: "/templates", icon: "book" }] },
 ];
 
-export const savedFilters = ["All projects", "Drafts", "Rendering", "Ready"];
+export const savedFilters = ["Todos os projetos", "Drafts", "Rendering", "Ready"];
 
 export const galleryCards = [
-  { title: "From brief to reel", subtitle: "Product Launch", color: "coral" },
-  { title: "Build in public", subtitle: "Creator Punch", color: "violet" },
-  { title: "The data behind the idea", subtitle: "Data Story", color: "mint" },
+  { title: "From brief to reel", subtitle: "Lançamento de produto", color: "coral" },
+  { title: "Build in public", subtitle: "Impacto do criador", color: "violet" },
+  { title: "The data behind the idea", subtitle: "História com dados", color: "mint" },
 ];
 
 export const mockUser = { name: ownerName, email: ownerEmail, initials };
@@ -264,7 +264,7 @@ export const studioTagline = "A calmer way to make content.";
 
 export const footerText = "Built for thoughtful creators.";
 
-export const defaultSceneCaption = "Make your next reel feel inevitable.";
+export const defaultSceneCaption = "Faça seu próximo reel parecer inevitável.";
 
 export const defaultProjectName = "Untitled reel";
 
@@ -276,7 +276,7 @@ export const defaultFormat = "9:16 Portrait";
 
 export const defaultVoice = "Maya";
 
-export const defaultSoundtrack = "Ambient Glow";
+export const defaultSoundtrack = "Brilho ambiente";
 
 export const defaultCaptionStyle = "Karaoke";
 
@@ -325,7 +325,7 @@ export const workspaceName = "Northstar Studio";
 export const workspacePlan = "Local workspace";
 
 export const notificationItems = [
-  { title: "Render ready", body: "Product launch / Aurora is ready to download.", unread: true },
+  { title: "Render pronto", body: "Product launch / Aurora is ready to download.", unread: true },
   { title: "New preset", body: "Cinematic Brand is now available in Templates.", unread: false },
 ];
 
@@ -339,7 +339,7 @@ export const defaultTransition = "Dissolve";
 
 export const helperText = "You can change every choice later in the editor.";
 
-export const freePlanLimit = "36 renders this month";
+export const freePlanLimit = "36 renders este mês";
 
 export const buildNumber = "2026.09";
 
@@ -350,8 +350,8 @@ export const appShortName = "Reel";
 export const loadingText = "Loading your studio…";
 
 export const toastMessages = {
-  saved: "Project saved",
-  renderQueued: "Render queued",
+  saved: "Projeto salvo",
+  renderQueued: "Render adicionado à fila",
   copied: "Copied to clipboard",
   comingSoon: "This feature is coming soon",
 };
@@ -372,13 +372,13 @@ export const notificationCount = 2;
 
 export const currentDateLabel = "September 20, 2026";
 
-export const renderEngineDescription = "Choose the engine that powers your final render.";
+export const renderEngineDescription = "Escolha o motor que gera seu render final.";
 
-export const autosaveDescription = "Keep edits safe while you move through the story.";
+export const autosaveDescription = "Mantenha as edições seguras enquanto avança na história.";
 
 export const captionDescription = "Generate a caption track whenever you produce.";
 
-export const settingsSections = ["General", "Rendering", "Captions", "Integrations"];
+export const settingsSections = ["Geral", "Renderização", "Legendas", "Integrações"];
 
 export const integrationItems = [
   { name: "Unsplash", status: "Connected", detail: "Stock images and videos" },
@@ -386,9 +386,9 @@ export const integrationItems = [
   { name: "Ollama", status: "Optional", detail: "Local AI planning" },
 ];
 
-export const templateDescription = "Start with a production shape, then make it yours.";
+export const templateDescription = "Comece com uma estrutura de produção e deixe-a com a sua cara.";
 
-export const voicesDescription = "Preview voices, set a default, and keep your tone consistent.";
+export const voicesDescription = "Ouça as vozes, escolha uma padrão e mantenha seu tom consistente.";
 
 export const settingsDescription = "Tune the workspace to your preferred production flow.";
 
@@ -431,7 +431,7 @@ export const topbarHeight = 72;
 
 export const mobileBreakpoint = 880;
 
-export const renderQueueStatus = "2 items in render queue";
+export const renderQueueStatus = "2 itens na fila de renderização";
 
 export const currentRenderProgress = 68;
 
@@ -441,15 +441,15 @@ export const timeSavedLabel = "4h 12m saved this month";
 
 export const welcomeLabel = "Welcome back";
 
-export const heroEyebrow = "LOCAL-FIRST CONTENT STUDIO";
+export const heroEyebrow = "ESTÚDIO DE CONTEÚDO LOCAL-FIRST";
 
-export const heroTitle = "Make your next reel feel inevitable.";
+export const heroTitle = "Faça seu próximo reel parecer inevitável.";
 
-export const heroSubhead = "Turn a brief, script, screenshot, recording, or podcast into finished content — with a calmer production flow.";
+export const heroSubhead = "Transforme um briefing, roteiro, captura, gravação ou podcast em conteúdo pronto — com um fluxo de produção mais tranquilo.";
 
-export const ctaLabel = "Create a project";
+export const ctaLabel = "Criar um projeto";
 
-export const secondaryCtaLabel = "Explore templates";
+export const secondaryCtaLabel = "Explorar templates";
 
 export const quickProduceLabel = "Quick Produce";
 
@@ -477,7 +477,7 @@ export const quoteAuthor = "— The Reel Studio team";
 
 export const emptyActivity = "No recent activity yet.";
 
-export const defaultFilter = "All projects";
+export const defaultFilter = "Todos os projetos";
 
 export const navLabel = "Navigation";
 
@@ -489,15 +489,15 @@ export const dashboardSubtitle = "A focused place to turn ideas into motion.";
 
 export const statsTitle = "This month";
 
-export const activityTitle = "Recent activity";
+export const activityTitle = "Atividade recente";
 
-export const projectsTitle = "Your projects";
+export const projectsTitle = "Seus projetos";
 
 export const templatesTitle = "Production templates";
 
-export const voicesTitle = "Voice library";
+export const voicesTitle = "Biblioteca de vozes";
 
-export const settingsTitle = "Workspace settings";
+export const settingsTitle = "Configurações do espaço";
 
 export const editorTitle = "Editor";
 
@@ -509,7 +509,7 @@ export const audioTitle = "Audio";
 
 export const captionsTitle = "Captions";
 
-export const renderTitle = "Render & export";
+export const renderTitle = "Renderizar e exportar";
 
 export const publishTitle = "Produce";
 
@@ -523,7 +523,7 @@ export const saveLabel = "Save";
 
 export const cancelLabel = "Cancel";
 
-export const addSceneLabel = "Add scene";
+export const addSceneLabel = "Adicionar cena";
 
 export const regenerateLabel = "Regenerate";
 
@@ -541,11 +541,11 @@ export const madeFor = "Made for thoughtful creators";
 
 export const localFirstLabel = "Local-first";
 
-export const privacyLabel = "Private by default";
+export const privacyLabel = "Privado por padrão";
 
 export const aiOptionalLabel = "AI optional";
 
-export const noKeyLabel = "No key required";
+export const noKeyLabel = "Sem chave necessária";
 
 export const originalProjectSource = "reel-studio-main.zip";
 
@@ -555,7 +555,7 @@ export const fallbackProject = starterProjects[0];
 
 export const defaultActiveNav = "Projects";
 
-export const emptySearchText = "No projects match that search.";
+export const emptySearchText = "Nenhum projeto corresponde à busca.";
 
 export const renderingCopy = "The worker is composing your scenes.";
 
@@ -609,7 +609,7 @@ export const frameRates = ["24 fps", "30 fps", "60 fps"];
 
 export const defaultFrameRate = "30 fps";
 
-export const safeAreaLabel = "Safe area";
+export const safeAreaLabel = "Área segura";
 
 export const audioMixLabel = "Audio mix";
 
@@ -641,7 +641,7 @@ export const currentLocale = "pt-BR";
 
 export const featureFlags = { quickProduce: true, localVoice: true, stockMedia: true };
 
-export const canonicalTitle = "Reel Studio — Make your next reel feel inevitable.";
+export const canonicalTitle = "Reel Studio — Faça seu próximo reel parecer inevitável.";
 
 export const maxSearchResults = 12;
 
@@ -757,9 +757,9 @@ export const scenePrompt = "Write the scene line…";
 
 export const captionPrompt = "Caption text";
 
-export const defaultCaption = "The old way is over.";
+export const defaultCaption = "O jeito antigo acabou.";
 
-export const defaultSceneTitle = "The old way is over.";
+export const defaultSceneTitle = "O jeito antigo acabou.";
 
 export const defaultHook = "Your hook belongs here.";
 
@@ -801,9 +801,9 @@ export const planLabel = "Local-first production";
 
 export const planDetail = "Projects and renders stay on your machine.";
 
-export const securityLabel = "Private by default";
+export const securityLabel = "Privado por padrão";
 
-export const supportLabel = "Need a hand?";
+export const supportLabel = "Precisa de ajuda?";
 
 export const supportDetail = "Read the creator guide or send us a note.";
 
@@ -813,11 +813,11 @@ export const defaultWorkspaceName = "Northstar Studio";
 
 export const createProjectModalTitle = "Start a new project";
 
-export const createProjectModalDescription = "Choose a starting point. You can fine-tune every scene later.";
+export const createProjectModalDescription = "Escolha um ponto de partida. You can fine-tune every scene later.";
 
 export const projectNamePlaceholder = "e.g. Spring campaign / Aurora launch";
 
-export const briefPlaceholder = "Paste a brief, script, URL, or a few rough ideas…";
+export const briefPlaceholder = "Cole um briefing, roteiro, URL ou algumas ideias iniciais…";
 
 export const createFromBriefLabel = "Create from brief";
 
@@ -827,7 +827,7 @@ export const chooseTemplateLabel = "Choose a template";
 
 export const selectedLabel = "Selected";
 
-export const newProjectLabel = "New project";
+export const newProjectLabel = "Novo projeto";
 
 export const closeModalLabel = "Close modal";
 
@@ -837,7 +837,7 @@ export const deleteProjectLabel = "Delete project";
 
 export const duplicateProjectLabel = "Duplicate project";
 
-export const shareProjectLabel = "Share project";
+export const shareProjectLabel = "Compartilhar projeto";
 
 export const projectMenuLabel = "Project actions";
 
@@ -849,7 +849,7 @@ export const renderQueueLabel = "Render queue";
 
 export const renderQueueEmpty = "Nothing is rendering right now.";
 
-export const livePreviewLabel = "Live preview";
+export const livePreviewLabel = "Prévia ao vivo";
 
 export const timelineLabel = "Timeline";
 
@@ -867,19 +867,19 @@ export const mediaLabel = "Media";
 
 export const animationLabel = "Animation";
 
-export const exportSettingsLabel = "Export settings";
+export const exportSettingsLabel = "Configurações de exportação";
 
 export const renderNowLabel = "Render now";
 
-export const saveDraftLabel = "Save draft";
+export const saveDraftLabel = "Salvar rascunho";
 
 export const publishLabel = "Export files";
 
 export const unsavedChangesLabel = "Unsaved changes";
 
-export const allChangesSavedLabel = "All changes saved";
+export const allChangesSavedLabel = "Todas as alterações salvas";
 
-export const projectSavedLabel = "Saved just now";
+export const projectSavedLabel = "Salvo agora";
 
 export const previewPlaceholder = "Your story preview appears here.";
 
@@ -895,31 +895,31 @@ export const appearanceLabel = "Appearance";
 
 export const accountLabel = "Account";
 
-export const workspaceLabel = "Workspace";
+export const workspaceLabel = "Espaço de trabalho";
 
-export const integrationsLabel = "Integrations";
+export const integrationsLabel = "Integrações";
 
 export const billingLabel = "Plan";
 
-export const dangerZoneLabel = "Danger zone";
+export const dangerZoneLabel = "Zona de perigo";
 
-export const resetLabel = "Reset demo data";
+export const resetLabel = "Restaurar dados de demonstração";
 
 export const resetDescription = "Return this workspace to its starter projects.";
 
-export const resetSuccess = "Demo data restored";
+export const resetSuccess = "Dados de demonstração restaurados";
 
-export const saveSuccess = "Settings saved";
+export const saveSuccess = "Configurações salvas";
 
-export const previewVoiceLabel = "Preview voice";
+export const previewVoiceLabel = "Ouvir prévia";
 
 export const setDefaultLabel = "Set as default";
 
-export const voiceDefaultLabel = "Default voice";
+export const voiceDefaultLabel = "Voz padrão";
 
-export const voicePreviewText = "Your idea deserves room to land.";
+export const voicePreviewText = "Sua ideia merece espaço para chegar.";
 
-export const voiceDetail = "Natural pacing · studio tone";
+export const voiceDetail = "Ritmo natural · tom de estúdio";
 
 export const stockMediaLabel = "Stock media";
 
@@ -939,13 +939,13 @@ export const sceneLockedLabel = "Locked";
 
 export const sceneUnlockedLabel = "Unlocked";
 
-export const lockSceneHint = "Locked scenes stay fixed during regeneration.";
+export const lockSceneHint = "Cenas bloqueadas permanecem fixas durante a regeneração.";
 
 export const replacementLabel = "Replace";
 
 export const clearLabel = "Clear";
 
-export const musicSearchPlaceholder = "Search soundtracks…";
+export const musicSearchPlaceholder = "Buscar trilhas…";
 
 export const soundEffectsLabel = "Sound effects";
 
@@ -997,13 +997,13 @@ export const estimatedTimeLabel = "Estimated time";
 
 export const outputLabel = "Output";
 
-export const outputPrivacyLabel = "Output privacy";
+export const outputPrivacyLabel = "Privacidade da saída";
 
 export const localOutputLabel = "Keep local";
 
-export const downloadAfterRenderLabel = "Download after render";
+export const downloadAfterRenderLabel = "Baixar após o render";
 
-export const includeCaptionsLabel = "Include captions";
+export const includeCaptionsLabel = "Incluir legendas";
 
 export const includeTranscriptLabel = "Include transcript";
 
@@ -1019,9 +1019,9 @@ export const searchShortcut = "⌘ K";
 
 export const escapeShortcut = "Esc";
 
-export const commandItems = ["Create project", "Open last project", "View templates", "Open settings"];
+export const commandItems = ["Criar projeto", "Abrir último projeto", "Ver templates", "Abrir configurações"];
 
-export const mobileTabs = ["Projects", "Templates", "Voices"];
+export const mobileTabs = ["Projetos", "Templates", "Vozes"];
 
 export const navFooter = "Local-first · v0.4.0";
 

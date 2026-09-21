@@ -911,7 +911,7 @@ export default function ComponentsShowcase() {
                     </div>
                   </CardContent>
                   <CardFooter>
-                    <Button>Save changes</Button>
+                    <Button>Salvar alterações</Button>
                   </CardFooter>
                 </Card>
               </TabsContent>

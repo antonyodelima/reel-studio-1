@@ -1,0 +1,10 @@
+from pathlib import Path
+p = Path("client/src/pages/Editor.tsx")
+t = p.read_text()
+t = t.replace('function RenderPanel({ onClose, onRender }: { onClose: () => void; onRender: () => void }) {', 'function RenderPanel({ onClose, onRender }: { onClose: () => void; onRender: (engine: "ffmpeg" | "remotion" | "hyperframes") => void }) {')
+t = t.replace('  const [caption, setCaption] = useState(true);', '  const [caption, setCaption] = useState(true);\n  const [engine, setEngine] = useState<"ffmpeg" | "remotion" | "hyperframes">("ffmpeg");')
+t = t.replace('<label className="grid gap-2"><span className="text-xs font-bold">Qualidade</span><select value={quality}', '<label className="grid gap-2"><span className="text-xs font-bold">Motor de renderização</span><select value={engine} onChange={(e) => setEngine(e.target.value as "ffmpeg" | "remotion" | "hyperframes")} className="rounded-xl border border-ink/8 bg-white px-3 py-3 text-xs font-semibold outline-none focus:border-coral"><option value="ffmpeg">FFmpeg (disponível agora)</option><option value="remotion">Remotion (adaptador)</option><option value="hyperframes">HyperFrames (adaptador)</option></select></label><label className="grid gap-2"><span className="text-xs font-bold">Qualidade</span><select value={quality}')
+t = t.replace('onClick={onRender} className="bg-coral', 'onClick={() => onRender(engine)} className="bg-coral')
+t = t.replace('  const render = () => { if (Number.isInteger(numericId) && numericId > 0) {', '  const render = (engine: "ffmpeg" | "remotion" | "hyperframes" = "ffmpeg") => { if (Number.isInteger(numericId) && numericId > 0) {')
+t = t.replace('renderMutation.mutate({ projectId: numericId, engine: "ffmpeg" }', 'renderMutation.mutate({ projectId: numericId, engine }')
+p.write_text(t)
