@@ -83,3 +83,39 @@ export async function generateCartesiaPreview(input: { transcript: string; voice
   const audio = await generateCartesiaWav(input);
   return `data:audio/wav;base64,${audio.toString("base64")}`;
 }
+
+const supportedCloneMimeTypes = new Set(["audio/flac", "audio/mpeg", "audio/mp3", "audio/ogg", "audio/oga", "audio/wav", "audio/x-wav", "audio/webm"]);
+
+export function normalizeCloneLanguage(language: string) {
+  return language.trim().toLowerCase().split(/[-_]/)[0] || "pt";
+}
+
+export function validateCloneClip(input: { buffer: Buffer; mimeType: string; fileName: string }) {
+  if (input.buffer.length > 16 * 1024 * 1024) throw new Error("O áudio precisa ter no máximo 16 MB");
+  const mimeType = input.mimeType.toLowerCase().split(";")[0];
+  const extension = input.fileName.toLowerCase().split(".").pop() ?? "";
+  const supportedExtensions = new Set(["flac", "mp3", "mpeg", "mpga", "oga", "ogg", "wav", "webm"]);
+  if (!supportedCloneMimeTypes.has(mimeType) && !supportedExtensions.has(extension)) throw new Error("Formato não suportado. Use WAV, MP3, OGG, FLAC ou WEBM");
+}
+
+export async function cloneCartesiaVoice(input: { buffer: Buffer; fileName: string; mimeType: string; name: string; language: string; tagline?: string; description?: string }) {
+  const { apiKey, baseUrl } = getTtsProviderConfig();
+  validateCloneClip(input);
+  const form = new FormData();
+  form.append("clip", new Blob([new Uint8Array(input.buffer)], { type: input.mimeType }), input.fileName);
+  form.append("name", input.name.trim().slice(0, 160));
+  form.append("language", normalizeCloneLanguage(input.language));
+  if (input.tagline?.trim()) form.append("tagline", input.tagline.trim().slice(0, 32));
+  if (input.description?.trim()) form.append("description", input.description.trim().slice(0, 2000));
+  const response = await fetch(`${baseUrl}/voices/clone`, { method: "POST", headers: { Authorization: `Bearer ${apiKey}`, "Cartesia-Version": CARTESIA_VERSION }, body: form });
+  if (!response.ok) throw new Error(`Falha ao clonar voz na Cartesia: ${await cartesiaError(response)}`);
+  const voice = await response.json() as { id?: string; name?: string; language?: string; description?: string; tagline?: string };
+  if (!voice.id) throw new Error("A Cartesia não retornou o identificador da voz clonada");
+  return { id: voice.id, name: voice.name ?? input.name, language: voice.language ?? normalizeCloneLanguage(input.language), description: voice.description ?? input.description ?? "", tagline: voice.tagline ?? input.tagline ?? "" };
+}
+
+export async function deleteCartesiaVoice(voiceId: string) {
+  const { apiKey, baseUrl } = getTtsProviderConfig();
+  const response = await fetch(`${baseUrl}/voices/${encodeURIComponent(voiceId)}`, { method: "DELETE", headers: { Authorization: `Bearer ${apiKey}`, "Cartesia-Version": CARTESIA_VERSION } });
+  if (!response.ok && response.status !== 404) throw new Error(`Não foi possível excluir a voz na Cartesia (${response.status})`);
+}

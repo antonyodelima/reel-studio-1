@@ -1,6 +1,6 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, projects, scenes, mediaAssets, renderJobs, Project, Scene } from "../drizzle/schema";
+import { InsertUser, users, projects, scenes, mediaAssets, renderJobs, voiceClones, Project, Scene, VoiceClone } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -97,5 +97,24 @@ export async function updateRenderJob(id: number, patch: Partial<typeof renderJo
 export async function getRenderJob(userId: number, id: number) {
   const db = await getDb(); if (!db) return undefined;
   const result = await db.select().from(renderJobs).where(and(eq(renderJobs.id, id), eq(renderJobs.userId, userId))).limit(1);
+  return result[0];
+}
+
+export async function listVoiceClones(userId: number) {
+  const db = await getDb(); if (!db) return [];
+  return db.select().from(voiceClones).where(eq(voiceClones.userId, userId)).orderBy(desc(voiceClones.createdAt));
+}
+
+export async function createVoiceCloneRecord(input: typeof voiceClones.$inferInsert) {
+  const db = await getDb(); if (!db) throw new Error("Database is not configured");
+  const inserted = await db.insert(voiceClones).values(input).$returningId();
+  const result = await db.select().from(voiceClones).where(and(eq(voiceClones.id, inserted[0].id), eq(voiceClones.userId, input.userId))).limit(1);
+  return result[0];
+}
+
+export async function updateVoiceCloneRecord(userId: number, id: number, input: Partial<Pick<VoiceClone, "cartesiaVoiceId" | "status" | "errorMessage" | "tagline" | "description">>) {
+  const db = await getDb(); if (!db) throw new Error("Database is not configured");
+  await db.update(voiceClones).set(input).where(and(eq(voiceClones.id, id), eq(voiceClones.userId, userId)));
+  const result = await db.select().from(voiceClones).where(and(eq(voiceClones.id, id), eq(voiceClones.userId, userId))).limit(1);
   return result[0];
 }

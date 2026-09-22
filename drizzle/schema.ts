@@ -76,9 +76,27 @@ export const renderJobs = mysqlTable("renderJobs", {
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
 
+export const voiceClones = mysqlTable("voiceClones", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  cartesiaVoiceId: varchar("cartesiaVoiceId", { length: 160 }),
+  name: varchar("name", { length: 160 }).notNull(),
+  language: varchar("language", { length: 20 }).notNull(),
+  tagline: varchar("tagline", { length: 80 }),
+  description: text("description"),
+  sourceFileName: varchar("sourceFileName", { length: 255 }).notNull(),
+  sourceMimeType: varchar("sourceMimeType", { length: 120 }).notNull(),
+  consentConfirmed: int("consentConfirmed").default(0).notNull(),
+  status: mysqlEnum("status", ["creating", "ready", "failed", "deleted"]).default("creating").notNull(),
+  errorMessage: text("errorMessage"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Project = typeof projects.$inferSelect;
 export type Scene = typeof scenes.$inferSelect;
 export type MediaAsset = typeof mediaAssets.$inferSelect;
 export type RenderJob = typeof renderJobs.$inferSelect;
+export type VoiceClone = typeof voiceClones.$inferSelect;

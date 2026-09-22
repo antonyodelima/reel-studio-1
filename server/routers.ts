@@ -4,10 +4,10 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { invokeLLM } from "./_core/llm";
 import { systemRouter } from "./_core/systemRouter";
 import { protectedProcedure, publicProcedure, router } from "./_core/trpc";
-import { createMediaRecord, createProjectRecord, createRenderJob, createSceneRecords, getProjectById, getRenderJob, getScenes, listProjects, updateProjectRecord, updateRenderJob, updateSceneRecord } from "./db";
+import { createMediaRecord, createProjectRecord, createRenderJob, createSceneRecords, createVoiceCloneRecord, getProjectById, getRenderJob, getScenes, listProjects, listVoiceClones, updateProjectRecord, updateRenderJob, updateSceneRecord, updateVoiceCloneRecord } from "./db";
 import { renderProject } from "./render";
 import { storagePut } from "./storage";
-import { generateCartesiaWav, listCartesiaVoices } from "./tts";
+import { cloneCartesiaVoice, deleteCartesiaVoice, generateCartesiaWav, listCartesiaVoices } from "./tts";
 
 const sceneSchema = z.object({ label: z.string().min(1).max(80), title: z.string().min(1).max(400), caption: z.string().min(1).max(400), durationMs: z.number().int().min(1000).max(60000).optional() });
 const projectId = z.number().int().positive();
@@ -61,6 +61,29 @@ export const appRouter = router({
       }
     }),
     uploadAsset: protectedProcedure.input(z.object({ projectId: projectId.optional(), fileName: z.string().min(1).max(255), mimeType: z.string().min(1).max(120), dataUrl: z.string().min(20).max(25_000_000) })).mutation(async ({ ctx, input }) => { const match = input.dataUrl.match(/^data:[^;]+;base64,(.+)$/); if (!match) throw new Error("Arquivo inválido"); const buffer = Buffer.from(match[1], "base64"); const uploaded = await storagePut(`users/${userId(ctx)}/uploads/${input.fileName}`, buffer, input.mimeType); return createMediaRecord({ userId: userId(ctx), projectId: input.projectId, fileName: input.fileName, mimeType: input.mimeType, storageKey: uploaded.key, storageUrl: uploaded.url }); }),
+  }),
+  voiceClones: router({
+    list: protectedProcedure.query(({ ctx }) => listVoiceClones(userId(ctx))),
+    create: protectedProcedure.input(z.object({ name: z.string().min(2).max(160), language: z.string().min(2).max(20).default("pt-BR"), tagline: z.string().max(32).optional(), description: z.string().max(2000).optional(), fileName: z.string().min(1).max(255), mimeType: z.string().min(1).max(120), dataUrl: z.string().min(100).max(25_000_000), consentConfirmed: z.literal(true) })).mutation(async ({ ctx, input }) => {
+      const match = input.dataUrl.match(/^data:[^;]+;base64,(.+)$/);
+      if (!match) throw new Error("Arquivo de voz inválido");
+      const buffer = Buffer.from(match[1], "base64");
+      const record = await createVoiceCloneRecord({ userId: userId(ctx), name: input.name, language: input.language, tagline: input.tagline, description: input.description, sourceFileName: input.fileName, sourceMimeType: input.mimeType, consentConfirmed: 1, status: "creating" });
+      try {
+        const cloned = await cloneCartesiaVoice({ buffer, fileName: input.fileName, mimeType: input.mimeType, name: input.name, language: input.language, tagline: input.tagline, description: input.description });
+        return updateVoiceCloneRecord(userId(ctx), record.id, { cartesiaVoiceId: cloned.id, tagline: cloned.tagline, description: cloned.description, status: "ready", errorMessage: null });
+      } catch (error) {
+        await updateVoiceCloneRecord(userId(ctx), record.id, { status: "failed", errorMessage: error instanceof Error ? error.message : "Falha ao clonar a voz" });
+        throw error;
+      }
+    }),
+    delete: protectedProcedure.input(z.object({ id: z.number().int().positive() })).mutation(async ({ ctx, input }) => {
+      const clones = await listVoiceClones(userId(ctx));
+      const clone = clones.find((item) => item.id === input.id);
+      if (!clone) throw new Error("Voz clonada não encontrada");
+      if (clone.cartesiaVoiceId) await deleteCartesiaVoice(clone.cartesiaVoiceId);
+      return updateVoiceCloneRecord(userId(ctx), clone.id, { status: "deleted" });
+    }),
   }),
   renders: router({
     start: protectedProcedure.input(z.object({ projectId, engine: z.enum(["ffmpeg", "remotion", "hyperframes"]).default("ffmpeg") })).mutation(async ({ ctx, input }) => { const project = await getProjectById(userId(ctx), input.projectId); if (!project) throw new Error("Projeto não encontrado"); const scenes = await getScenes(project.id); const job = await createRenderJob({ userId: userId(ctx), projectId: project.id, engine: input.engine, status: "rendering", progress: 10 }); if (!job) throw new Error("Não foi possível criar o job de renderização"); try { const result = await renderProject({ ...project, engine: input.engine }, scenes, userId(ctx), input.engine); return updateRenderJob(job.id, { status: "ready", progress: 100, mp4Url: result.mp4Url, srtUrl: result.srtUrl, vttUrl: result.vttUrl }); } catch (error) { await updateRenderJob(job.id, { status: "failed", progress: 0, errorMessage: error instanceof Error ? error.message : "Falha desconhecida" }); throw error; } }),
