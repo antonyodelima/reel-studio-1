@@ -1,0 +1,8 @@
+{
+  "name": "Reel Studio",
+  "description": "Local-first short-form video and reel studio for creators",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
